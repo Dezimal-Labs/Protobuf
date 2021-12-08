@@ -18,10 +18,6 @@ namespace ProductGrpc.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public override Task<Empty> Test(Empty request, ServerCallContext context)
-        {
-            return base.Test(request, context);
-        }
 
         public override async Task<ProductModel> GetProduct(GetProductRequest request, ServerCallContext context)
         {
@@ -57,7 +53,7 @@ namespace ProductGrpc.Services
                     Description = product.Description,
                     Price = product.Price,
                     Status = ProductStatus.Instock,
-                    CreatedTime = Timestamp.FromDateTime(product.CreatedTime)
+                   CreatedTime = Timestamp.FromDateTime(product.CreatedTime)
                 };
 
                 await responseStream.WriteAsync(productModel);

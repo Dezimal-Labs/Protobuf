@@ -14,7 +14,7 @@ service ProductProtoService {
 	rpc DeleteProduct(DeleteProductRequest) returns (DeleteProductResponse);
 
 	rpc InsertBulkProduct (stream ProductModel) returns (InsertBulkProductResponse);
-	rpc Test(google.protobuf.Empty) returns (google.protobuf.Empty);
+	
 
 }
 message  GetProductRequest{
@@ -60,3 +60,7 @@ enum ProductStatus{
         LOW=1;
         NONE=2;
 }
+
+
+
+

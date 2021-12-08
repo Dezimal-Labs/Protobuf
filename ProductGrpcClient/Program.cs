@@ -2,38 +2,58 @@
 //Console.WriteLine("Hello, World!");
 
 
+using Grpc.Core;
 using Grpc.Net.Client;
 using ProductGrpc.Protos;
-
-
-Console.WriteLine("Waiting for server is running");
-Thread.Sleep(2000);
-
 
 using var channel = GrpcChannel.ForAddress("https://localhost:7257");
 var client = new ProductProtoService.ProductProtoServiceClient(channel);
 
-//GetProductsAsync
+await GetAllProducts(client);
 
-Console.WriteLine("GetproductAsync Started ....");
-var response = await client.GetProductAsync(
-    new GetProductRequest
-    {
-        ProductId = 2
-    });
+await GetProductAsync(client);
 
-
-Console.WriteLine("GetproductAsync Response :" + response.ToString());
 
 //GetAllproducts
-Console.WriteLine("GetAllproducts Started ....");
-using (var clientData = client.GetAllProducts(new GetAllProductsRequest()))
+async Task GetAllProducts(ProductProtoService.ProductProtoServiceClient client)
 {
-    while (await clientData.ResponseStream.MoveNext(new System.Threading.CancellationToken()))
-    { 
-        var currentProduct=clientData.ResponseStream.Current;
-        Console.WriteLine(currentProduct);
+
+   // //GetAllproducts products server stream Method from client
+    //Console.WriteLine("GetAllproducts Started ....");
+    //using (var clientData = client.GetAllProducts(new GetAllProductsRequest()))
+    //{
+    //    while (await clientData.ResponseStream.MoveNext(new System.Threading.CancellationToken()))
+    //    { 
+    //        var currentProduct=clientData.ResponseStream.Current;
+    //        Console.WriteLine(currentProduct);
+    //    }
+    //}
+
+    ////GetAllProducts with c# 9
+
+    Console.WriteLine("GetAllproducts with c# 9 Started ....");
+    using var clientData = client.GetAllProducts(new GetAllProductsRequest());
+    await foreach (var responseData in clientData.ResponseStream.ReadAllAsync())
+    {
+        Console.WriteLine(responseData);
     }
+
+}
+
+//GetProductsAsync
+static async Task GetProductAsync(ProductProtoService.ProductProtoServiceClient client)
+{
+    Console.WriteLine("GetproductAsync Started ....");
+    var response = await client.GetProductAsync(
+        new GetProductRequest
+        {
+            ProductId = 2
+        });
+
+
+    Console.WriteLine("GetproductAsync Response :" + response.ToString());
+    Console.WriteLine("Waiting for server is running");
+    Thread.Sleep(2000);
 }
 
 
