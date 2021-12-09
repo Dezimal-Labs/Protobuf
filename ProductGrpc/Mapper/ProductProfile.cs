@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
+using ProductGrpc.Models;
 using ProductGrpc.Protos;
 
 namespace ProductGrpc.Mapper
@@ -8,7 +9,7 @@ namespace ProductGrpc.Mapper
     {
         public ProductProfile()
         {
-            CreateMap<Models.Product,ProductModel>()
+            CreateMap<Product,ProductModel>()
                 .ForMember(dest =>dest.CreatedTime,
                 opt => opt.MapFrom(src => Timestamp.FromDateTime(src.CreatedTime)));
 
