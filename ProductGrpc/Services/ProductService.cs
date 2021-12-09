@@ -18,7 +18,7 @@ namespace ProductGrpc.Services
 
         public ProductService(ProductsContext productsContext, IMapper mapper, ILogger<ProductService> logger)
         {
-            _productsContext= productsContext ?? throw new ArgumentNullException(nameof(productsContext));
+            _productsContext = productsContext ?? throw new ArgumentNullException(nameof(productsContext));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -33,7 +33,7 @@ namespace ProductGrpc.Services
             var product = await _productsContext.Products.FindAsync(request.ProductId);
             if (product == null)
             {
-                //
+                throw new RpcException(new Status(StatusCode.NotFound, $"Product with ID={request.ProductId} is not found"));
             }
 
             //var productModel = new ProductModel
@@ -113,10 +113,76 @@ namespace ProductGrpc.Services
             var productModel = _mapper.Map<ProductModel>(product);
             return productModel;
         }
+
+
+        //update product
+        public override async Task<ProductModel> UpdateProduct(UpdateProductRequest request, ServerCallContext context)
+        {
+           var product =_mapper.Map<Product>(request.Product);
+            bool isExist = await _productsContext.Products.AnyAsync(p => p.ProductId == product.ProductId);
+
+            if(!isExist)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, $"Product with ID={product.ProductId} is not found"));
+            }
+
+            _productsContext.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _productsContext.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            var productModel=_mapper.Map<ProductModel>(product);
+            return productModel;
+
+        }
+
+        //delete product
+
+        public override async Task<DeleteProductResponse> DeleteProduct(DeleteProductRequest request, ServerCallContext context)
+        {
+            var product=await _productsContext.Products.FindAsync(request.ProductId);
+            if(product==null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, $"Product with ID={request.ProductId} is not found"));
+            }
+
+            _productsContext.Products.Remove(product);
+            var deleteCount = await _productsContext.SaveChangesAsync();
+            var response = new DeleteProductResponse
+            {
+                Success = deleteCount > 0
+            };
+
+            return response;
+        }
+
+
+        //Bulk insert
+
+        //public override async Task<InsertBulkProductResponse> InsertBulkProduct(IAsyncStreamReader<ProductModel> requestStream, ServerCallContext context)
+        //{
+        //    while (await requestStream.MoveNext())
+        //    {
+        //        var product = _mapper.Map<Product>(requestStream.Current);
+        //        _productsContext.Products.Add(product);
+        //    }
+        //        var insertCount=await _productsContext.SaveChangesAsync();
+        //        var response = new InsertBulkProductResponse
+        //        {
+        //            Success = insertCount > 0,
+        //            InsertCount = insertCount
+        //        };
+
+        //    return response;
+        //}
+
     }
-
-  
-
 }
 
 

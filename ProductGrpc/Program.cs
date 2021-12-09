@@ -10,8 +10,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<ProductsContextSeed>();
 // Add services to the container.
-builder.Services.AddGrpc();
+
 builder.Services.AddDbContext<ProductsContext>(options => options.UseInMemoryDatabase("Products"));
+
+builder.Services.AddGrpc(opt =>
+{
+    opt.EnableDetailedErrors = true;
+});
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
 
 SeedDatabase(app);
@@ -22,13 +29,13 @@ void SeedDatabase(IHost app)
     //using (var scope = scopedFactory.CreateScope())
     //{
     //    var service = scope.ServiceProvider.GetService<ProductsContextSeed>();
-        
+
     //    service.SeedAsync()
     //}
 
-    using var scope=app.Services.CreateScope();
+    using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
-    var productContext=services.GetRequiredService<ProductsContext>();
+    var productContext = services.GetRequiredService<ProductsContext>();
     ProductsContextSeed.SeedAsync(productContext);
 }
 
