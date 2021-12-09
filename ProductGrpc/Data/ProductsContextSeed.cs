@@ -15,7 +15,7 @@ namespace ProductGrpc.Data
                         Name ="Mi10T",
                         Description ="New Xiomi Phone Mi10T",
                         Price =699,
-                        status =ProductGrpc.Models.ProductStatus.INSTOCK,
+                        Status =ProductGrpc.Models.ProductStatus.INSTOCK,
                         CreatedTime = DateTime.UtcNow
                         },
 
@@ -24,7 +24,7 @@ namespace ProductGrpc.Data
                         Name ="H5",
                         Description ="New Huawei Phone H5",
                         Price =799,
-                        status =ProductGrpc.Models.ProductStatus.INSTOCK,
+                        Status =ProductGrpc.Models.ProductStatus.INSTOCK,
                         CreatedTime = DateTime.UtcNow
                         },
 
@@ -33,7 +33,7 @@ namespace ProductGrpc.Data
                         Name ="A50",
                         Description ="New Samsung Phone A50",
                         Price =899,
-                        status =ProductGrpc.Models.ProductStatus.INSTOCK,
+                        Status =ProductGrpc.Models.ProductStatus.INSTOCK,
                         CreatedTime = DateTime.UtcNow
                         }
                   

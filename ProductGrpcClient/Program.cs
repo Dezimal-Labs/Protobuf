@@ -19,6 +19,7 @@ async Task GetAllProducts(ProductProtoService.ProductProtoServiceClient client)
 {
 
    // //GetAllproducts products server stream Method from client
+
     //Console.WriteLine("GetAllproducts Started ....");
     //using (var clientData = client.GetAllProducts(new GetAllProductsRequest()))
     //{
