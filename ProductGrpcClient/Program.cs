@@ -18,6 +18,36 @@ await UpdateProductAsync(client);
 await GetAllProducts(client);
 await DeleteProductAsync(client);
 await GetAllProducts(client);
+
+await InsertBulkProduct(client);
+await GetAllProducts(client);
+
+//insert bulk products
+static async Task InsertBulkProduct(ProductProtoService.ProductProtoServiceClient client)
+{
+    Console.WriteLine("...................................");
+    Console.WriteLine("InsertBulkProduct Started ....");
+    Console.WriteLine("...................................");
+    using var clientBulk = client.InsertBulkProduct();
+
+    for (int i = 0; i < 10; i++)
+    {
+        var productModel = new ProductModel
+        {
+                Name = $"Product_{i}",
+                Description = $"Bulk inserted product_{i}",
+                Price = 1207+ i ,
+                Status = ProductStatus.Instock,
+                CreatedTime = Timestamp.FromDateTime(DateTime.UtcNow)
+          };
+
+        await clientBulk.RequestStream.WriteAsync(productModel);
+    }
+    await clientBulk.RequestStream.CompleteAsync(); ;
+    var responseBulk = await clientBulk;
+    Console.WriteLine($"Status : {responseBulk.Success}. Insert count : {responseBulk.InsertCount}");
+}
+
 Console.ReadLine();
 
 
@@ -87,7 +117,7 @@ static async Task AddProductAsync(ProductProtoService.ProductProtoServiceClient 
                         {
                             Product = new ProductModel
                             {
-                                ProductId = 6,
+                                ProductId = 4,
                                 Name = "One Plus",
                                 Description = "New One plus Phone 1+",
                                 Price = 1207,
