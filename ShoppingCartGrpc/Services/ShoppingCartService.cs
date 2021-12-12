@@ -10,12 +10,14 @@ namespace ShoppingCartGrpc.Services
     public class ShoppingCartService :ShoppingCartProtoService.ShoppingCartProtoServiceBase
     {
         private readonly ShoppingCartContext _shoppingCartDbContext;
+        private readonly DiscountService _discountService;
         private readonly IMapper _mapper;
         private readonly ILogger<ShoppingCartService> _logger;
 
-        public ShoppingCartService(ShoppingCartContext shoppingCartDbContext, IMapper mapper, ILogger<ShoppingCartService> logger)
+        public ShoppingCartService(ShoppingCartContext shoppingCartDbContext, DiscountService discountService, IMapper mapper, ILogger<ShoppingCartService> logger)
         {
             _shoppingCartDbContext = shoppingCartDbContext;
+            _discountService = discountService;
             _mapper = mapper;
             _logger = logger;
         }
@@ -104,10 +106,10 @@ namespace ShoppingCartGrpc.Services
                 else
                 {
                     // GRPC CALL DISCOUNT SERVICE -- check discount and set the item price
-                    //var discount = await _discountService.GetDiscount(requestStream.Current.DiscountCode);
+                   var discount = await _discountService.GetDiscount(requestStream.Current.DiscountCode);
 
-                    float discount = 100;
-                    newAddedCartItem.Price -= discount;  
+                   // float discount = 100;
+                    newAddedCartItem.Price -= discount.Amount;  
 
                     shoppingCart.Items.Add(newAddedCartItem);
                 }
@@ -124,4 +126,6 @@ namespace ShoppingCartGrpc.Services
             return response;
         }
     }
+
+
 }
