@@ -19,7 +19,7 @@ namespace ProductWorkerService
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Waiting for service is running...........");
+            Console.WriteLine("Waiting for Productworker_service is running...........");
             Thread.Sleep(2000);
 
             while (!stoppingToken.IsCancellationRequested)

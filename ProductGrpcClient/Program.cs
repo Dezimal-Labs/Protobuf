@@ -117,7 +117,7 @@ static async Task AddProductAsync(ProductProtoService.ProductProtoServiceClient 
                         {
                             Product = new ProductModel
                             {
-                                ProductId = 4,
+//                                ProductId = ,
                                 Name = "One Plus",
                                 Description = "New One plus Phone 1+",
                                 Price = 1207,

@@ -12,7 +12,7 @@ namespace ShoppingCartGrpc.Data
                 {
                     new ShoppingCart
                     {
-                        UserName = "swn",
+                        UserName = "swn2",
                         Items = new List<ShoppingCartItem>
                         {
                            new ShoppingCartItem
