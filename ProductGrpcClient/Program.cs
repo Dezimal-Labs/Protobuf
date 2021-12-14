@@ -5,22 +5,77 @@
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Newtonsoft.Json;
 using ProductGrpc.Protos;
+using System.Text;
+using RabbitMQ.Client;
+
+var factory = new ConnectionFactory
+{
+    //Uri = new Uri("amqp://test:test@localhost:5672")
+    Uri = new Uri("amqps://salman:amazonerabbitmq@b-1a6622d5-58dd-41f4-9e71-65ced45d0af5.mq.us-east-2.amazonaws.com:5671")
+
+};
+
+var connection = factory.CreateConnection();
+using var channel_rabbit = connection.CreateModel();
+channel_rabbit.QueueDeclare("demo-queue", durable: true, exclusive: false, autoDelete: false, arguments: null);
 
 using var channel = GrpcChannel.ForAddress("https://localhost:7257");
 var client = new ProductProtoService.ProductProtoServiceClient(channel);
-await GetAllProducts(client);
-await GetProductAsync(client);
-await AddProductAsync(client);
-await GetAllProducts(client);
+//await GetAllProducts(client);
+//await GetProductAsync(client);
+//await GetProd(client);
+//await AddProductAsync(client);
+//await GetAllProducts(client);
 
-await UpdateProductAsync(client);
-await GetAllProducts(client);
-await DeleteProductAsync(client);
-await GetAllProducts(client);
+//await UpdateProductAsync(client);
+//await GetAllProducts(client);
 
-await InsertBulkProduct(client);
-await GetAllProducts(client);
+SendMessageToRabbitMQ(client);
+
+void SendMessageToRabbitMQ(ProductProtoService.ProductProtoServiceClient client)
+{
+    Console.WriteLine("...................................");
+    Console.WriteLine("Rabbitmq Started ....");
+    Console.WriteLine("...................................");
+
+
+    var request = new GetProductRequest
+    {
+        ProductId = 1
+    };
+
+
+    var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
+    channel_rabbit.BasicPublish("", "demo-queue", null, body);
+}
+
+static async Task  GetProd(ProductProtoService.ProductProtoServiceClient client)
+{
+
+    Console.WriteLine("...................................");
+    Console.WriteLine("Getprod Started ....");
+    Console.WriteLine("...................................");
+
+
+
+    var response = await client.GetProductAsync(
+         new GetProductRequest
+         {
+             ProductId = 1
+         });
+
+
+    Console.WriteLine("Getprod Response :" + response.ToString());
+}
+
+
+//await DeleteProductAsync(client);
+//await GetAllProducts(client);
+
+//await InsertBulkProduct(client);
+//await GetAllProducts(client);
 
 //insert bulk products
 static async Task InsertBulkProduct(ProductProtoService.ProductProtoServiceClient client)
@@ -60,16 +115,27 @@ static async Task GetProductAsync(ProductProtoService.ProductProtoServiceClient 
     Console.WriteLine("GetproductAsync Started ....");
     Console.WriteLine("...................................");
 
-    //var request = new GetProductRequest
-    //                  {
-    //                        ProductId = 1
-    //                   };
 
-    var response = await client.GetProductAsync(
-        new GetProductRequest
-        {
-            ProductId = 1
-        });
+
+    //var response = await client.GetProductAsync(
+    //     new GetProductRequest
+    //     {
+    //         ProductId = 1
+    //     });
+
+
+    //Console.WriteLine("GetproductAsync Response :" + response.ToString());
+
+
+    var request = new GetProductRequest
+                     {
+                            ProductId = 1
+                       };
+
+
+    var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request));
+
+    var response = await client.GetProductAsync(request);
 
 
     Console.WriteLine("GetproductAsync Response :" + response.ToString());

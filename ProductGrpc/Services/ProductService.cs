@@ -28,6 +28,9 @@ namespace ProductGrpc.Services
             return base.Test(request, context);
         }
 
+
+
+
         public override async Task<ProductModel> GetProduct(GetProductRequest request, ServerCallContext context)
         {
             var product = await _productsContext.Products.FindAsync(request.ProductId);
