@@ -54,7 +54,7 @@ namespace ShoppingCartWorkerService
                     var addNewScItem = new AddItemIntoShoppingCartRequest
                     {
                         Username = _config.GetValue<string>("WorkerService:UserName"),
-                        DiscountCode = "CODE_100",
+                        DiscountCode = "CODE_200",
                         NewCartItem = new ShoppingCartItemModel
                         {
                             ProductId = responseData.ProductId,

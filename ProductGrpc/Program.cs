@@ -19,7 +19,19 @@ builder.Services.AddGrpc(opt =>
 });
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+//app.UseSwaggerUI();
+
+
+
+//app.UseSwagger();
+//app.UseSwaggerUI();
+
 
 SeedDatabase(app);
 
@@ -39,7 +51,16 @@ void SeedDatabase(IHost app)
     ProductsContextSeed.SeedAsync(productContext);
 }
 
+app.UseSwagger();
+app.UseSwaggerUI();
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+
+}
+
+ 
 
 //app.MapGrpcService<GreeterService>();
 app.MapGrpcService<ProductService>();

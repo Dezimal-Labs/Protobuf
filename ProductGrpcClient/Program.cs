@@ -59,6 +59,12 @@ static async Task GetProductAsync(ProductProtoService.ProductProtoServiceClient 
     Console.WriteLine("...................................");
     Console.WriteLine("GetproductAsync Started ....");
     Console.WriteLine("...................................");
+
+    //var request = new GetProductRequest
+    //                  {
+    //                        ProductId = 1
+    //                   };
+
     var response = await client.GetProductAsync(
         new GetProductRequest
         {
